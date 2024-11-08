@@ -1,0 +1,18 @@
+[
+	{
+		"source": "https://videos-3.earthcam.com/fecnetwork/hdtimes10.flv/chunklist_w665865646.m3u8?t=vBci5OreTDT5OVZWlrH3hFWPpk6y83Y18ohQ4H190JPY6NGuZTJ5/NJ+WU6Y3tPIB6fUZrNBVLTF8Xa/NctVBw==&td=202411071049",
+		"headers": {
+			"Host": "videos-3.earthcam.com",
+			"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:132.0) Gecko/20100101 Firefox/132.0",
+			"Accept": "*/*",
+			"Accept-Language": "en-US,en;q=0.5",
+			"Accept-Encoding": "gzip, deflate, br, zstd",
+			"Origin": "https://www.earthcam.com",
+			"Connection": "keep-alive",
+			"Referer": "https://www.earthcam.com/",
+			"Sec-Fetch-Dest": "empty",
+			"Sec-Fetch-Mode": "cors",
+			"Sec-Fetch-Site": "same-site"
+		}
+	}
+]
