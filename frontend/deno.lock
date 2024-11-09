@@ -9,6 +9,7 @@
     "npm:eslint-plugin-react-refresh@~0.4.13": "0.4.13_eslint@9.13.0",
     "npm:eslint@^9.13.0": "9.13.0",
     "npm:globals@^15.11.0": "15.11.0",
+    "npm:lucide-react@0.455": "0.455.0_react@18.3.1",
     "npm:react-dom@^18.3.1": "18.3.1_react@18.3.1",
     "npm:react@^18.3.1": "18.3.1",
     "npm:typescript-eslint@^8.10.0": "8.11.0_@typescript-eslint+parser@8.11.0__eslint@9.13.0__typescript@5.6.3_eslint@9.13.0_typescript@5.6.3",
@@ -966,6 +967,12 @@
         "yallist"
       ]
     },
+    "lucide-react@0.455.0_react@18.3.1": {
+      "integrity": "sha512-XQoi58X4COfjy6s1P4TVsXMhU2r1KsfUTRFyds/yJvdzBNOfu0F9RRIas626T8UaNZzEv4llF7ivh4uLkYp3rw==",
+      "dependencies": [
+        "react"
+      ]
+    },
     "merge2@1.4.1": {
       "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg=="
     },
@@ -1231,6 +1238,7 @@
         "npm:eslint-plugin-react-refresh@~0.4.13",
         "npm:eslint@^9.13.0",
         "npm:globals@^15.11.0",
+        "npm:lucide-react@0.455",
         "npm:react-dom@^18.3.1",
         "npm:react@^18.3.1",
         "npm:typescript-eslint@^8.10.0",

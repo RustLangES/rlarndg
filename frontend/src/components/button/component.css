@@ -1,0 +1,43 @@
+
+[class*="button-"] {
+	font-weight: bolder;
+	font-size: 15px;
+
+	padding: 7px 10px;
+
+	border-radius: 8px;
+
+	display: flex;
+
+	gap: 2px;
+	justify-content: center;
+	align-items: center;
+
+	cursor: pointer;
+
+	transition: filter 0.3s;
+}
+
+[class*="button-"]:hover {
+	filter: brightness(110%);
+}
+
+[class*="button-"] > *:last-child {
+	height: 18px;
+}
+
+.button-primary {
+	background-color: #007bff;
+}
+
+.button-secondary {
+	background-color: #6c757d;
+}
+
+.button-warning {
+	background-color: #ffc107;
+}
+
+.button-error {
+	background-color: #dc3545;
+}

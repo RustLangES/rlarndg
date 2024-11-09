@@ -1,0 +1,85 @@
+
+.top-bar {
+	border-bottom: 1px solid #333333;
+
+	height: 8vh;
+
+	display: flex;
+
+	justify-content: space-between;
+}
+
+.top-bar > * {
+	margin: 0 7vw;
+
+	width: 40vw;
+
+	display: flex;
+
+	gap: 2vw;
+	align-items: center;
+}
+
+.top-bar-logo {
+	height: 50%;
+
+	display: flex;
+
+	gap: 15px;
+	justify-content: center;
+	align-items: center;
+}
+
+.top-bar-logo > img {
+	height: 100%;
+}
+
+.top-bar-logo > span {
+	font-weight: bolder;
+}
+
+.top-bar-external {
+	justify-content: flex-end;
+}
+
+.top-bar-external > a,
+.top-bar-related > a {
+	padding: 7px;
+
+	border-radius: 8px;
+	border: 1px solid #000000;
+
+	text-decoration: none;
+
+	cursor: pointer;
+
+	display: flex;
+
+	gap: 4px;
+	justify-content: center;
+	align-items: center;
+
+	transition: background-color 0.3s, border 0.3s;
+}
+
+.top-bar-external > a > span,
+.top-bar-related > a > span {
+	display: flex;
+
+	justify-content: center;
+	align-items: center;
+}
+
+.top-bar-external > a > *:last-child,
+.top-bar-related > a > *:last-child {
+	height: 15px;
+}
+
+.top-bar-external > a:hover,
+.top-bar-related > a:hover {
+	background-color: #3333338F;
+
+	border: 1px solid #333333
+}
+
+

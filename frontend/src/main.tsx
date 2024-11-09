@@ -1,9 +1,10 @@
-import { ReactElement, StrictMode, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import { ReactElement, StrictMode, useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
 
-import Landing from './components/landing/page';
+import Landing from "./pages/landing/page";
+import Documentation from "./pages/documentation/page";
 
-import './index.css';
+import "./index.css";
 
 interface ComponentRoute {
 	route: RegExp;
@@ -15,12 +16,16 @@ interface RedirectRoute {
 	redirect: string;
 }
 
-type Route = ComponentRoute | RedirectRoute
+type Route = ComponentRoute | RedirectRoute;
 
 const routes: Route[] = [
 	{
 		route: /^\/$/,
 		component: <Landing />
+	},
+	{
+		route: /^\/docs$/,
+		component: <Documentation />
 	}
 ];
 
@@ -29,10 +34,10 @@ function App(): ReactElement {
 
 	useEffect(() => {
 		const route = routes
-			.find(({route, ..._}) => route.test(location.pathname));
+			.find(({route}) => route.test(location.pathname));
 
 		if (route == undefined) {
-			location.assign('/');
+			location.assign("/");
 			return;
 		}
 
@@ -44,8 +49,8 @@ function App(): ReactElement {
 		setRoute(route);
 	});
 
-	return <>{route || ''}</>;
+	return <>{route?.component || ""}</>;
 }
 
-createRoot(document.getElementById('root')!)
+createRoot(document.getElementById("root")!)
 	.render(<StrictMode><App /></StrictMode>)
