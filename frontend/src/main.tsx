@@ -6,9 +6,33 @@ import Documentation from "./pages/documentation/page";
 
 import "./index.css";
 
+class MResponse {
+	private constructor(
+		private url?: string
+	) {}
+
+	public static next(): MResponse {
+		return new MResponse();
+	}
+
+	public static redirect(redirect: string): MResponse {
+		return new MResponse(redirect);
+	}
+
+	public apply(): boolean {
+		if (this.url != undefined) {
+			location.assign(this.url);
+			return false;
+		}
+
+		return true;
+	}
+}
+
 interface ComponentRoute {
 	route: RegExp;
 	component: ReactElement;
+	middleware?: (() => MResponse)[];
 }
 
 interface RedirectRoute {
@@ -44,6 +68,12 @@ function App(): ReactElement {
 		if ('redirect' in route) {
 			location.assign(route.redirect);
 			return;
+		}
+
+		for (const middleware of route.middleware ?? []) {
+			if (!middleware().apply()) {
+				return;
+			}
 		}
 
 		setRoute(route);

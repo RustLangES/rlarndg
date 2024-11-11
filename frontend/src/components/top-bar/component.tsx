@@ -40,6 +40,7 @@ export default function TopBar({links}: TopBarProps): ReactElement {
 			<Button
 				type="primary"
 				icon={<User />}
+				href="/login"
 			>
 				Login
 			</Button>

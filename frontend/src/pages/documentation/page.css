@@ -1,0 +1,47 @@
+
+.documentation-main {
+	padding: 50px 0;
+
+	position: absolute;
+
+	left: 50%;
+	transform: translateX(-50%);
+
+	width: 50vw;
+
+	display: flex;
+
+	gap: 20px;
+	flex-direction: column;
+}
+
+.documentation-main > .separator {
+	height: 1px;
+	width: 100%;
+
+	background-color: #333333;
+}
+
+.documentation-main .md-highlight {
+	background-color: #1e242a;
+
+	padding: 3px 5px;
+
+	border-radius: 5px;
+
+	font-size: 0.9em;
+}
+
+.documentation-main > :is(h1, h2, h3, h4, h5, h6) {
+	font-size: 2em;
+}
+
+.documentation-main > * {
+	width: 100%;
+}
+
+.documentation-main > .endpoint {
+	width: 80%;
+
+	align-self: center;
+}

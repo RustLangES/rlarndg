@@ -24,8 +24,8 @@ export default function Landing(): ReactElement {
 						number generator.
 					</h1>
 					<div>
-						<Button type="primary">Get started</Button>
-						<Button type="secondary">Documentation</Button>
+						<Button type="primary" href="/pricing">Get started</Button>
+						<Button type="secondary" href="/docs">Documentation</Button>
 					</div>
 				</div>
 				<div>
@@ -84,9 +84,9 @@ export default function Landing(): ReactElement {
 					<iframe src="https://discord.com/widget?id=778674594856960012&theme=dark" />
 				</div>
 			</div>
-			<div className="landing-footer">
+			<footer>
 				<p>No Copyright RustLangEs, Licensed as CC0.</p>
-			</div>
+			</footer>
 		</div>
 	</>;
 }

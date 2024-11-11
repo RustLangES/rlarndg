@@ -44,7 +44,7 @@ async fn main() -> Result<(), AppError> {
                     .service(random_color)
             )
     })
-        .bind(("127.0.0.1", 8080))?
+        .bind(("127.0.0.1", 5174))?
         .run()
         .await?;
 

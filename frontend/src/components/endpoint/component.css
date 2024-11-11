@@ -1,0 +1,114 @@
+
+.endpoint {
+	overflow: none;
+
+	min-height: 10vh;
+	width: 30vw;
+
+	background-color: #34434d;
+
+	border-radius: 8px;
+
+	display: flex;
+
+	gap: 15px;
+	flex-direction: column;
+
+	padding: 10px 15px;
+}
+
+.endpoint-main {
+	display: flex;
+
+	gap: 20px;
+	justify-content: center;
+	align-items: center;
+}
+
+.endpoint-main > label {
+	padding: 7px;
+
+	border-radius: 5px;
+}
+
+.endpoint-main > label[data-method="GET"] {
+	background-color: #61affe;
+}
+
+.endpoint-main > label[data-method="POST"] {
+	background-color: #49cc90;
+}
+
+.endpoint-main > label[data-method="PUT"] {
+	background-color: #fca130;
+}
+
+.endpoint-main > label[data-method="DELETE"] {
+	background-color: #f93e3e;
+}
+
+.endpoint-main > label[data-method="PATCH"] {
+	background-color: #8f43ff;
+}
+
+.endpoint-main > input,
+.endpoint-param > input {
+	background-color: #0d1117;
+
+	border: none;
+	border-radius: 5px;
+
+	width: 100%;
+
+	padding: 10px;
+
+	outline: none;
+}
+
+.endpoint-param > input {
+	width: calc(100% - 20px);
+}
+
+.endpoint-param > span:last-child {
+	color: red;
+}
+
+.endpoint-param {
+	display: flex;
+
+	gap: 10px;
+	flex-direction: column;
+}
+
+.endpoint-result {
+	resize: none;
+
+	background-color: #0d1117;
+
+	border: none;
+	border-radius: 5px;
+
+	padding: 10px;
+
+	outline: none;
+}
+
+[class*="status-"] {
+	width: max-content;
+
+	padding: 3px 5px;
+
+	border-radius: 5px;
+}
+
+.status-green {
+	background-color: green;
+}
+
+.status-yellow {
+	background-color: yellow;
+}
+
+.status-red {
+	background-color: red;
+}

@@ -18,7 +18,7 @@
 	transition: filter 0.3s;
 }
 
-[class*="button-"]:hover {
+[class*="button-"]:not([data-disabled="true"]):hover {
 	filter: brightness(110%);
 }
 
@@ -40,4 +40,9 @@
 
 .button-error {
 	background-color: #dc3545;
+}
+
+[class*="button-"][data-disabled="true"] {
+	filter: brightness(50%);
+	cursor: not-allowed;
 }
