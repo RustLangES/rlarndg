@@ -8,6 +8,7 @@ import Landing from "./pages/landing/page";
 import Documentation from "./pages/documentation/page";
 import Login, { loginMiddleware } from "./pages/login/page";
 import UserPanel, { userPannelMiddleware } from "./pages/user/page";
+import Pricing from "./pages/pricing/page";
 
 import "./index.css";
 
@@ -18,19 +19,24 @@ const routes: Route[] = [
 		middleware: [optionalUserMiddleware]
 	},
 	{
-		route: /^\/docs$/,
+		route: /^\/docs\/?$/,
 		component: (user?: User) => <Documentation user={user} />,
 		middleware: [optionalUserMiddleware]
 	},
 	{
-		route: /^\/login$/,
+		route: /^\/login\/?$/,
 		component: () => <Login />,
 		middleware: [loginMiddleware]
 	},
 	{
-		route: /^\/user$/,
+		route: /^\/user\/?$/,
 		component: (user: User) => <UserPanel user={user} />,
 		middleware: [userPannelMiddleware]
+	},
+	{
+		route: /^\/pricing\/?$/,
+		component: (user: User) => <Pricing user={user} />,
+		middleware: [optionalUserMiddleware]
 	}
 ];
 

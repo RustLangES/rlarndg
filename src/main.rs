@@ -1,7 +1,7 @@
 use actix_web::{App, HttpServer, Scope};
 use flexi_logger::{Logger, FlexiLoggerError};
 use helpers::logging::format_colored_log;
-use routes::{auth::{get_user, login, signup}, values::{random_bool, random_color, random_signed, random_unsigned}};
+use routes::{auth::{get_user, login, signup}, keys::get_key_ids, values::{random_bool, random_color, random_signed, random_unsigned}};
 use tokio::main;
 use thiserror::Error;
 use std::io::Error as IoError;
@@ -9,15 +9,6 @@ use std::io::Error as IoError;
 mod helpers;
 mod routes;
 mod models;
-
-// TODO: implement API keys, a MASTER_PASSWORD environment variable
-// should exist, the header should be distinct between password and keys
-// the value format could be "token XXXXX" or "password XXXXXX"
-// if the password or token attempted is invalid a 60 second
-// ratelimit should be applied, otherwise, requests without
-// an api key should be able to do 1 request every 10 seconds,
-// requests with api key should be able to do non ratelimited
-// requests. (if many api keys are bought a server extension should be considered)
 
 #[derive(Debug, Error)]
 enum AppError {
@@ -49,6 +40,10 @@ async fn main() -> Result<(), AppError> {
                     .service(login)
                     .service(signup)
                     .service(get_user)
+            )
+            .service(
+                Scope::new("/keys")
+                    .service(get_key_ids)
             )
     })
         .bind(("127.0.0.1", 5174))?

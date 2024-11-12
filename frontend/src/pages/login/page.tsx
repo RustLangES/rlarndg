@@ -52,18 +52,9 @@ export default function Login(): ReactElement {
 	return <>
 		<TopBar
 			links={[
-				{
-					text: "home",
-					href: "/"
-				},
-				{
-					text: "documentation",
-					href: "/docs"
-				},
-				{
-					text: "pricing",
-					href: "/pricing"
-				}
+				{ text: "Home", href: "/" },
+				{ text: "Documentation", href: "/docs" },
+				{ text: "Pricing", href: "/pricing" }
 			]}
 			login={"disabled"}
 		/>
@@ -73,7 +64,7 @@ export default function Login(): ReactElement {
 				<label htmlFor="email">Email</label>
 				<input id="email" placeholder="you@email.tld" />
 				<label htmlFor="password">Password</label>
-				<input id="password" placeholder="password"/>
+				<input id="password" placeholder="password" type="password" />
 			</div>
 			<span className="login-error">{error}</span>
 			<Button type="primary" onClick={login}>Login</Button>

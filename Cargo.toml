@@ -16,6 +16,6 @@ tokio = { version = "1.41.0", features = ["full"] }
 flexi_logger = "0.29.6"
 log = "0.4.22"
 colored = "2.1.0"
-sqlx = { version = "0.8.2", features = ["postgres", "runtime-async-std", "time"] }
+sqlx = { version = "0.8.2", features = ["bigdecimal", "postgres", "runtime-async-std", "time"] }
 jsonwebtoken = "9.3.0"
 bcrypt = "0.15.1"

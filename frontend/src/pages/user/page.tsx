@@ -24,18 +24,9 @@ export default function UserPanel({user}: UserPanelProps): ReactElement {
 	return <>
 		<TopBar
 			links={[
-				{
-					text: "home",
-					href: "/"
-				},
-				{
-					text: "documentation",
-					href: "/docs"
-				},
-				{
-					text: "pricing",
-					href: "/pricing"
-				}
+				{ text: "Home", href: "/" },
+				{ text: "Documentation", href: "/docs" },
+				{ text: "Pricing", href: "/pricing" }
 			]}
 			login={"logout"}
 		/>
