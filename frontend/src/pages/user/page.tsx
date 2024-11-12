@@ -4,6 +4,7 @@ import { User } from "../../helpers/user";
 import { MResponse } from "../../helpers/router";
 
 import "./page.css";
+import TopBar from "../../components/top-bar/component";
 
 interface UserPanelProps {
 	user: User;
@@ -20,5 +21,23 @@ export async function userPannelMiddleware(): Promise<MResponse> {
 }
 
 export default function UserPanel({user}: UserPanelProps): ReactElement {
-	return <></>;
+	return <>
+		<TopBar
+			links={[
+				{
+					text: "home",
+					href: "/"
+				},
+				{
+					text: "documentation",
+					href: "/docs"
+				},
+				{
+					text: "pricing",
+					href: "/pricing"
+				}
+			]}
+			login={"logout"}
+		/>
+	</>;
 }

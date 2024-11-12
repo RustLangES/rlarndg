@@ -4,16 +4,26 @@ import { CopyBlock, hybrid } from "react-code-blocks";
 import TopBar from "../../components/top-bar/component";
 import Endpoint from "../../components/endpoint/component";
 
+import { OptionalUserProps } from "../../helpers/user";
+
 import "./page.css";
 
-export default function Documentation(): ReactElement {
+export default function Documentation({user}: OptionalUserProps): ReactElement {
 	const [apiKey, setApiKey] = useState("");
 
+	let name = undefined;
+
+	if (user != undefined)
+		name = user.email.split("@")[0];
+
 	return <>
-		<TopBar links={[
-			{text: "Home", href: "/"},
-			{text: "Pricing", href: "/pricing"}
-		]}/>
+		<TopBar
+			links={[
+				{text: "Home", href: "/"},
+				{text: "Pricing", href: "/pricing"}
+			]}
+			login={name == undefined ? "enabled" : ["panel", name]}
+		/>
 		<div className="documentation-main">
 			<h1>Documentation</h1>
 			<p>

@@ -65,7 +65,7 @@ export default function Login(): ReactElement {
 					href: "/pricing"
 				}
 			]}
-			loginEnabled={false}
+			login={"disabled"}
 		/>
 		<div className="login-container">
 			<h1>Login to your account</h1>

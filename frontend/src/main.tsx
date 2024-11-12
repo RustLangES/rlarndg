@@ -2,7 +2,7 @@ import { ReactElement, StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import { Route } from "./helpers/router";
-import { User } from "./helpers/user";
+import { optionalUserMiddleware, User } from "./helpers/user";
 
 import Landing from "./pages/landing/page";
 import Documentation from "./pages/documentation/page";
@@ -14,11 +14,13 @@ import "./index.css";
 const routes: Route[] = [
 	{
 		route: /^\/$/,
-		component: () => <Landing />
+		component: (user?: User) => <Landing user={user} />,
+		middleware: [optionalUserMiddleware]
 	},
 	{
 		route: /^\/docs$/,
-		component: () => <Documentation />
+		component: (user?: User) => <Documentation user={user} />,
+		middleware: [optionalUserMiddleware]
 	},
 	{
 		route: /^\/login$/,
