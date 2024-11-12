@@ -90,17 +90,13 @@ export default function Documentation(): ReactElement {
 								? null
 								: "The value must be or either `hex` or `rgb`";
 						},
-						autocomplete() {
-						    return "rgb";
-						},
+						autocomplete: () => "rgb",
 					}
 				]}
 				headers={[
 					{
 						name: "Authorization",
-						autocomplete() {
-							return apiKey;
-						}
+						autocomplete: () => apiKey
 					}
 				]}
 			/>
@@ -118,9 +114,7 @@ export default function Documentation(): ReactElement {
 				headers={[
 					{
 						name: "Authorization",
-						autocomplete() {
-							return apiKey;
-						}
+						autocomplete: () => apiKey
 					}
 				]}
 			/>
@@ -138,9 +132,7 @@ export default function Documentation(): ReactElement {
 				headers={[
 					{
 						name: "Authorization",
-						autocomplete() {
-							return apiKey;
-						}
+						autocomplete: () => apiKey
 					}
 				]}
 			/>
@@ -159,9 +151,7 @@ export default function Documentation(): ReactElement {
 				headers={[
 					{
 						name: "Authorization",
-						autocomplete() {
-							return apiKey;
-						}
+						autocomplete: () => apiKey
 					}
 				]}
 			/>

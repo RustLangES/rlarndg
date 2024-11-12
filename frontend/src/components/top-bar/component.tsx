@@ -10,9 +10,10 @@ interface TopBarProps {
 		text: string;
 		href: string;
 	}[];
+	loginEnabled?: boolean;
 }
 
-export default function TopBar({links}: TopBarProps): ReactElement {
+export default function TopBar({links, loginEnabled = true}: TopBarProps): ReactElement {
 	return <div className="top-bar">
 		<div className="top-bar-related">
 			<div className="top-bar-logo">
@@ -41,6 +42,7 @@ export default function TopBar({links}: TopBarProps): ReactElement {
 				type="primary"
 				icon={<User />}
 				href="/login"
+				disabled={!loginEnabled}
 			>
 				Login
 			</Button>

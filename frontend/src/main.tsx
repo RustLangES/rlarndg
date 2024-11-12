@@ -1,85 +1,75 @@
 import { ReactElement, StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 
+import { Route } from "./helpers/router";
+import { User } from "./helpers/user";
+
 import Landing from "./pages/landing/page";
 import Documentation from "./pages/documentation/page";
+import Login, { loginMiddleware } from "./pages/login/page";
+import UserPanel, { userPannelMiddleware } from "./pages/user/page";
 
 import "./index.css";
-
-class MResponse {
-	private constructor(
-		private url?: string
-	) {}
-
-	public static next(): MResponse {
-		return new MResponse();
-	}
-
-	public static redirect(redirect: string): MResponse {
-		return new MResponse(redirect);
-	}
-
-	public apply(): boolean {
-		if (this.url != undefined) {
-			location.assign(this.url);
-			return false;
-		}
-
-		return true;
-	}
-}
-
-interface ComponentRoute {
-	route: RegExp;
-	component: ReactElement;
-	middleware?: (() => MResponse)[];
-}
-
-interface RedirectRoute {
-	route: RegExp;
-	redirect: string;
-}
-
-type Route = ComponentRoute | RedirectRoute;
 
 const routes: Route[] = [
 	{
 		route: /^\/$/,
-		component: <Landing />
+		component: () => <Landing />
 	},
 	{
 		route: /^\/docs$/,
-		component: <Documentation />
+		component: () => <Documentation />
+	},
+	{
+		route: /^\/login$/,
+		component: () => <Login />,
+		middleware: [loginMiddleware]
+	},
+	{
+		route: /^\/user$/,
+		component: (user: User) => <UserPanel user={user} />,
+		middleware: [userPannelMiddleware]
 	}
 ];
 
 function App(): ReactElement {
-	const [route, setRoute] = useState<ComponentRoute | null>(null);
+	const [route, setRoute] = useState<ReactElement | null>(null);
 
 	useEffect(() => {
-		const route = routes
-			.find(({route}) => route.test(location.pathname));
+		async function ew(): Promise<void> {
+			const route = routes
+				.find(({route}) => route.test(location.pathname));
 
-		if (route == undefined) {
-			location.assign("/");
-			return;
-		}
-
-		if ('redirect' in route) {
-			location.assign(route.redirect);
-			return;
-		}
-
-		for (const middleware of route.middleware ?? []) {
-			if (!middleware().apply()) {
+			if (route == undefined) {
+				location.assign("/");
 				return;
 			}
+
+			if ('redirect' in route) {
+				location.assign(route.redirect);
+				return;
+			}
+
+			let middlewareValue;
+
+			for (const middleware of route.middleware ?? []) {
+				const [next, value] = (await middleware()).apply();
+
+				middlewareValue = value;
+
+				if (!next) {
+					return;
+				}
+			}
+
+			setRoute(route.component(middlewareValue));
 		}
 
-		setRoute(route);
-	});
+		ew()
+			.then();
+	}, []);
 
-	return <>{route?.component || ""}</>;
+	return <>{route || ""}</>;
 }
 
 createRoot(document.getElementById("root")!)
