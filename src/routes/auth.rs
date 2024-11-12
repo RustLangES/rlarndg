@@ -1,7 +1,5 @@
-
 use std::time::Duration;
-
-use actix_web::{cookie::Cookie, get, http::header::ContentType, post, web::Json, HttpRequest, HttpResponse, Responder};
+use actix_web::{cookie::Cookie, get, http::header::ContentType, post, web::Json, HttpResponse, Responder};
 use serde::Deserialize;
 use time::OffsetDateTime;
 use crate::models::user::{User, UserError};
@@ -104,20 +102,10 @@ pub async fn signup(info: Json<LoginInfo>) -> impl Responder {
         .body(json)
 }
 
-// TODO: make this use a request collector
 
 #[get("/user")]
-pub async fn get_user(req: HttpRequest) -> impl Responder {
-    let user = match req.cookie("auth") {
-        Some(cookie) => User::from_jwt(cookie.value().to_string())
-            .await,
-        None => {
-            return HttpResponse::BadRequest()
-                .body("No auth cookie was found.");
-        }
-    };
-
-    match user.and_then(|u| u.to_string()) {
+pub async fn get_user(user: User) -> impl Responder {
+    match user.to_string() {
         Ok(user) => HttpResponse::Ok()
             .content_type(ContentType::json())
             .body(user),

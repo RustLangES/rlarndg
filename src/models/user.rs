@@ -1,4 +1,5 @@
-use std::time::Duration;
+use std::{future::{ready, Future}, pin::Pin, time::Duration};
+use actix_web::{dev::Payload, error::ErrorUnauthorized, Error as ActixWebError, FromRequest, HttpRequest};
 use bcrypt::{hash, verify, BcryptError, DEFAULT_COST};
 use serde::{Deserialize, Serialize};
 use serde_json::{to_string, Error as JsonError};
@@ -101,7 +102,7 @@ impl User {
         }
     }
 
-    pub async fn from_jwt(token: String) -> Result<Self, UserError> {
+    pub fn from_jwt(token: String) -> Result<Self, UserError> {
         Ok(
             decode::<UserClaims>(
                 &token,
@@ -154,5 +155,28 @@ impl UserClaims {
 impl From<&User> for UserClaims {
     fn from(User {id, email, password, created_at}: &User) -> Self {
         Self::new(*id, email.clone(), password.clone(), *created_at)
+    }
+}
+
+impl FromRequest for User {
+    type Error = ActixWebError;
+
+    type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
+
+    fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
+        Box::pin(ready(
+            req.cookie("auth")
+                .and_then(|cookie|
+                    User::from_jwt(
+                        cookie
+                            .value()
+                            .to_string()
+                    )
+                        .ok()
+                )
+                    .ok_or(
+                        ErrorUnauthorized("Missing or invalid auth cookie for this endpoint.")
+                    )
+        ))
     }
 }
