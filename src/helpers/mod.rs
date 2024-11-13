@@ -6,3 +6,4 @@ pub mod responses;
 pub mod logging;
 pub mod database;
 pub mod jwt;
+pub mod stripe;

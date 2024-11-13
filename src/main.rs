@@ -1,7 +1,7 @@
 use actix_web::{App, HttpServer, Scope};
 use flexi_logger::{Logger, FlexiLoggerError};
 use helpers::logging::format_colored_log;
-use routes::{auth::{get_user, login, signup}, keys::get_key_ids, values::{random_bool, random_color, random_signed, random_unsigned}};
+use routes::{auth::{get_user, login, signup}, keys::{get_key_ids, pay_new_key}, values::{random_bool, random_color, random_signed, random_unsigned}};
 use tokio::main;
 use thiserror::Error;
 use std::io::Error as IoError;
@@ -16,7 +16,7 @@ enum AppError {
     Io(#[from] IoError),
 
     #[error("{0:#}")]
-    Logger(#[from] FlexiLoggerError)
+    Logger(#[from] FlexiLoggerError),
 }
 
 #[main]
@@ -26,7 +26,7 @@ async fn main() -> Result<(), AppError> {
         .log_to_stdout()
         .start()?;
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
             .service(
                 Scope::new("/random")
@@ -44,6 +44,7 @@ async fn main() -> Result<(), AppError> {
             .service(
                 Scope::new("/keys")
                     .service(get_key_ids)
+                    .service(pay_new_key)
             )
     })
         .bind(("127.0.0.1", 5174))?
