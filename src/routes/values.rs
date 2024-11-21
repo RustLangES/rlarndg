@@ -4,10 +4,8 @@ use crate::{frame_bytes, helpers::{misc::color::Color, generator::random::{get_b
 
 #[get("/unsigned")]
 pub async fn random_unsigned(user: MaybeUser) -> impl Responder {
-    let bytes = frame_bytes!();
-
     TimedResponse::new(
-        get_unsigned(&bytes),
+        get_unsigned(&frame_bytes!()),
         user.into()
     )
         .into()
