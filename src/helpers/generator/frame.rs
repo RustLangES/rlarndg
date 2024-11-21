@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 #[macro_export]
 macro_rules! frame_bytes {
     () => {
-        match $crate::helpers::frame::frame_bytes_from_source().await {
+        match $crate::helpers::generator::frame::frame_bytes_from_source().await {
             Ok(bytes) => bytes,
             Err(err) => {
                 return actix_web::HttpResponse::InternalServerError()

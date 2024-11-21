@@ -19,12 +19,12 @@ pub fn get_jwt_hash() -> &'static [u8] {
 macro_rules! jwt_hash {
     (decode) => {
         &jsonwebtoken::DecodingKey::from_secret(
-            $crate::helpers::jwt::get_jwt_hash()
+            $crate::helpers::authentication::jwt::get_jwt_hash()
         )
     };
     (encode) => {
         &jsonwebtoken::EncodingKey::from_secret(
-            $crate::helpers::jwt::get_jwt_hash()
+            $crate::helpers::authentication::jwt::get_jwt_hash()
         )
     }
 }

@@ -7,7 +7,7 @@ use sqlx::{query, query_as, Error as SqlxError};
 use thiserror::Error;
 use time::OffsetDateTime;
 use jsonwebtoken::{decode, encode, errors::Error as JwtError, Header, Validation};
-use crate::{db, helpers::database::DbConnectionError, jwt_hash};
+use crate::{db, helpers::database::connection::DbConnectionError, jwt_hash};
 
 #[derive(Error, Debug)]
 pub enum UserError {

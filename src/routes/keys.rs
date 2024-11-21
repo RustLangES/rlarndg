@@ -1,7 +1,7 @@
 use actix_web::{get, http::header::ContentType, web::Query, HttpRequest, HttpResponse, Responder};
 use serde::Deserialize;
 use serde_json::to_string;
-use crate::{helpers::stripe::create_stripe_payment, models::{key::ApiKey, user::User}};
+use crate::{helpers::misc::stripe::create_stripe_payment, models::{key::ApiKey, user::User}};
 
 #[get("/user")]
 pub async fn get_key_ids(user: User) -> impl Responder {

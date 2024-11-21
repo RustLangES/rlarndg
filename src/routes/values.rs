@@ -1,6 +1,6 @@
 use actix_web::{get, web::Query, HttpResponse, Responder};
 use serde::Deserialize;
-use crate::{frame_bytes, helpers::{color::Color, random::{get_bool, get_unsigned}, responses::TimedResponse}, models::user::MaybeUser};
+use crate::{frame_bytes, helpers::{misc::color::Color, generator::random::{get_bool, get_unsigned}, http::responses::TimedResponse}, models::user::MaybeUser};
 
 #[get("/unsigned")]
 pub async fn random_unsigned(user: MaybeUser) -> impl Responder {

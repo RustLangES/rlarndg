@@ -30,6 +30,6 @@ pub async fn get_db_connection<'r>() -> Result<&'r Pool<Postgres>, DbConnectionE
 #[macro_export]
 macro_rules! db {
     () => {
-        $crate::helpers::database::get_db_connection().await?
+        $crate::helpers::database::connection::get_db_connection().await?
     };
 }

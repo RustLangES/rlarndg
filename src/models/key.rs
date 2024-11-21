@@ -3,7 +3,7 @@ use serde::Serialize;
 use serde_json::{to_string, Error as JsonError};
 use sqlx::{query_as, Error as SqlxError};
 use time::OffsetDateTime;
-use crate::{db, helpers::database::DbConnectionError};
+use crate::{db, helpers::database::connection::DbConnectionError};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
