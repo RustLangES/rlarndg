@@ -1,23 +1,8 @@
 import { ReactElement, useState } from "react";
-
-import { MResponse } from "../../helpers/router";
-
 import TopBar from "../../components/top-bar/component";
 import Button from "../../components/button/component";
 
-import "./page.css";
-
-export async function loginMiddleware(): Promise<MResponse> {
-	const user = await fetch("/api/auth/user", {
-		credentials: "include"
-	});
-
-	return user.status > 399
-		? MResponse.next()
-		: MResponse.redirect("/user");
-}
-
-export default function Login(): ReactElement {
+export default function Register(): ReactElement {
 	const [error, setError] = useState("");
 
 	async function login() {
@@ -29,7 +14,7 @@ export default function Login(): ReactElement {
 			return;
 		}
 
-		const result = await fetch("/api/auth/login", {
+		const result = await fetch("/api/auth/register", {
 			method: "POST",
 			body: JSON.stringify({
 				email: email.value,
@@ -59,7 +44,7 @@ export default function Login(): ReactElement {
 			login={"disabled"}
 		/>
 		<div className="login-container">
-			<h1>Login to your account</h1>
+			<h1>Register a new account</h1>
 			<div>
 				<label htmlFor="email">Email</label>
 				<input id="email" placeholder="you@email.tld" />
@@ -68,9 +53,9 @@ export default function Login(): ReactElement {
 			</div>
 			<div className="login-info">
 				<span className="login-error">{error}</span>
-				<p>Don't have an account? <a href="/register">register</a></p>
+				<p>Have an account? <a href="/login">login</a></p>
 			</div>
-			<Button type="primary" onClick={login}>Login</Button>
+			<Button type="primary" onClick={login}>Register</Button>
 		</div>
 	</>;
 }

@@ -33,7 +33,7 @@ pub async fn login(info: Json<LoginInfo>) -> impl Responder {
         .json(grv!(user.to_string()))
 }
 
-#[post("/signup")]
+#[post("/register")]
 pub async fn signup(info: Json<LoginInfo>) -> impl Responder {
     let LoginInfo { email, password } = info.into_inner();
 

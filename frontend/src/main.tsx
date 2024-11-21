@@ -9,6 +9,8 @@ import Documentation from "./pages/documentation/page";
 import Login, { loginMiddleware } from "./pages/login/page";
 import UserPanel, { userPannelMiddleware } from "./pages/user/page";
 import Pricing from "./pages/pricing/page";
+import TransactionSuccess from "./pages/transaction_success/page";
+import Register from "./pages/register/page";
 
 import "./index.css";
 
@@ -29,6 +31,11 @@ const routes: Route[] = [
 		middleware: [loginMiddleware]
 	},
 	{
+		route: /^\/register\/?$/,
+		component: () => <Register />,
+		middleware: [loginMiddleware]
+	},
+	{
 		route: /^\/user\/?$/,
 		component: (user: User) => <UserPanel user={user} />,
 		middleware: [userPannelMiddleware]
@@ -36,6 +43,11 @@ const routes: Route[] = [
 	{
 		route: /^\/pricing\/?$/,
 		component: (user: User) => <Pricing user={user} />,
+		middleware: [optionalUserMiddleware]
+	},
+	{
+		route: /^\/transaction\/success\/?$/,
+		component: (user: User) => <TransactionSuccess user={user} />,
 		middleware: [optionalUserMiddleware]
 	}
 ];

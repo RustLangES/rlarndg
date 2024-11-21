@@ -1,0 +1,51 @@
+
+.pricing-wrapper > div > div > input {
+	background-color: #0d1117;
+
+	border: 1px solid gray;
+	border-radius: 5px;
+
+	width: calc(100% - 20px);
+
+	padding: 10px;
+
+	outline: none;
+}
+
+.error {
+	color: red;
+}
+
+.input-error {
+	border: 1px solid red;
+
+	color: red
+}
+
+.pricing-wrapper {
+	position: absolute;
+
+	inset: 50%;
+	transform: translate(-50%, -50%);
+
+	height: 50vh;
+	width: 30vw;
+
+	display: flex;
+
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+
+	gap: 50px;
+}
+
+.pricing-wrapper > div:last-child > div:first-child {
+	display: flex;
+
+	gap: 15px;
+}
+
+.pricing-wrapper > div:last-child > div:first-child > input {
+	width: 90px;
+}

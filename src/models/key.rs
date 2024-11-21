@@ -1,7 +1,7 @@
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use serde::Serialize;
-use serde_json::{to_string, Error as JsonError};
-use sqlx::{query_as, Error as SqlxError};
+use serde_json::Error as JsonError;
+use sqlx::{query, query_as, Error as SqlxError};
 use time::OffsetDateTime;
 use crate::{db, helpers::database::connection::DbConnectionError};
 use thiserror::Error;
@@ -24,11 +24,12 @@ pub struct ApiKey {
     user_id: i32,
     token: String,
     paid: f64,
+    stripe_session_id: String,
     created_at: OffsetDateTime
 }
 
 impl ApiKey {
-    pub async fn new(user_id: i32, paid: f64) -> Result<Self, ApiKeyError> {
+    pub async fn new(user_id: i32, session_id: &String, paid: f64) -> Result<Self, ApiKeyError> {
         let key = thread_rng()
             .sample_iter(&Alphanumeric)
             .take(100)
@@ -38,13 +39,14 @@ impl ApiKey {
         let key = query_as!(
             Self,
             r#"
-                INSERT INTO keys (user_id, token, paid)
-                VALUES ($1, $2, $3)
-                RETURNING id, user_id, token, paid, created_at
+                INSERT INTO keys (user_id, token, paid, stripe_session_id)
+                VALUES ($1, $2, $3, $4)
+                RETURNING *
             "#,
             user_id,
             key,
-            paid
+            paid,
+            session_id
         )
             .fetch_one(db!())
             .await?;
@@ -68,7 +70,20 @@ impl ApiKey {
         Ok(keys)
     }
 
-    pub fn to_string(&self) -> Result<String, ApiKeyError> {
-        Ok(to_string(&self)?)
+    pub async fn fetch_exists(stripe_session_id: &String) -> Result<bool, ApiKeyError> {
+        query!(
+            r#"
+                SELECT EXISTS(
+                    SELECT true
+                    FROM keys
+                    WHERE stripe_session_id = $1
+                )
+            "#,
+            stripe_session_id
+        )
+            .fetch_one(db!())
+            .await?
+            .exists
+            .map_or(Ok(false), |v| Ok(v))
     }
 }

@@ -49,3 +49,12 @@
 
 	color: red;
 }
+
+.login-info {
+	display: flex;
+
+	flex-direction: row !important;
+	justify-content: space-between;
+
+	margin: 20px 10px;
+}
