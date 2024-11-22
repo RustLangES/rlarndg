@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { KeyboardEvent, ReactElement, useState } from "react";
 
 import { MResponse } from "../../helpers/router";
 
@@ -49,6 +49,13 @@ export default function Login(): ReactElement {
 		location.assign("/user");
 	}
 
+	async function onKeyDown(event: KeyboardEvent) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			await login();
+		}
+	}
+
 	return <>
 		<TopBar
 			links={[
@@ -62,9 +69,9 @@ export default function Login(): ReactElement {
 			<h1>Login to your account</h1>
 			<div>
 				<label htmlFor="email">Email</label>
-				<input id="email" placeholder="you@email.tld" />
+				<input id="email" placeholder="you@email.tld" onKeyDown={onKeyDown} />
 				<label htmlFor="password">Password</label>
-				<input id="password" placeholder="password" type="password" />
+				<input id="password" placeholder="password" type="password" onKeyDown={onKeyDown} />
 			</div>
 			<div className="login-info">
 				<span className="login-error">{error}</span>

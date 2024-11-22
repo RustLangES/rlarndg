@@ -1,11 +1,12 @@
-import { ReactElement, useState } from "react";
+import { KeyboardEvent, ReactElement, useState } from "react";
+
 import TopBar from "../../components/top-bar/component";
 import Button from "../../components/button/component";
 
 export default function Register(): ReactElement {
 	const [error, setError] = useState("");
 
-	async function login() {
+	async function register() {
 		const email = document.getElementById("email") as HTMLInputElement;
 		const password = document.getElementById("password") as HTMLInputElement;
 
@@ -34,6 +35,13 @@ export default function Register(): ReactElement {
 		location.assign("/user");
 	}
 
+	async function onKeyDown(event: KeyboardEvent) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			await register();
+		}
+	}
+
 	return <>
 		<TopBar
 			links={[
@@ -47,15 +55,15 @@ export default function Register(): ReactElement {
 			<h1>Register a new account</h1>
 			<div>
 				<label htmlFor="email">Email</label>
-				<input id="email" placeholder="you@email.tld" />
+				<input id="email" placeholder="you@email.tld" onKeyDown={onKeyDown} />
 				<label htmlFor="password">Password</label>
-				<input id="password" placeholder="password" type="password" />
+				<input id="password" placeholder="password" type="password" onKeyDown={onKeyDown} />
 			</div>
 			<div className="login-info">
 				<span className="login-error">{error}</span>
 				<p>Have an account? <a href="/login">login</a></p>
 			</div>
-			<Button type="primary" onClick={login}>Register</Button>
+			<Button type="primary" onClick={register}>Register</Button>
 		</div>
 	</>;
 }

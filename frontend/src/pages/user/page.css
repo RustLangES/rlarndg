@@ -1,0 +1,14 @@
+
+.user-wrapper {
+	position: absolute;
+	display: flex;
+
+	inset: 50%;
+	transform: translate(-50%, -50%);
+
+	height: 70vh;
+	width: 40vw;
+
+	flex-direction: column;
+	gap: 50px;
+}
