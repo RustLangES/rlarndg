@@ -1,6 +1,5 @@
-use actix_web::{get, web::Query, HttpRequest, HttpResponse, Responder};
+use actix_web::{get, post, web::Query, HttpRequest, HttpResponse, Responder};
 use serde::Deserialize;
-use serde_json::to_string;
 use crate::{grv, helpers::misc::stripe::{create_stripe_payment, verify_payment}, models::{key::ApiKey, user::User}};
 
 fn get_callback(req: &HttpRequest) -> String {
@@ -18,10 +17,22 @@ fn get_callback(req: &HttpRequest) -> String {
 pub async fn get_key_ids(user: User) -> impl Responder {
     HttpResponse::Ok()
         .json(
-            grv!(to_string(
-                &grv!(ApiKey::user_keys(user.id).await)
-            ))
+            &grv!(ApiKey::user_keys(user.id).await)
+                .iter()
+                .map(|k| k.id)
+                .collect::<Vec<_>>()
         )
+}
+
+#[derive(Deserialize)]
+struct ResetKeyQuery {
+    id: i32
+}
+
+#[post("/reset")]
+pub async fn reset_key(user: User, query: Query<ResetKeyQuery>) -> impl Responder {
+    HttpResponse::Ok()
+        .body(grv!(ApiKey::reset_key(user.id, query.id).await))
 }
 
 #[derive(Deserialize)]

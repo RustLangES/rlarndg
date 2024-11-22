@@ -1,18 +1,18 @@
 use actix_web::{get, web::Query, HttpResponse, Responder};
 use serde::Deserialize;
-use crate::{frame_bytes, helpers::{misc::color::Color, generator::random::{get_bool, get_unsigned}, http::responses::TimedResponse}, models::user::MaybeUser};
+use crate::{frame_bytes, helpers::{generator::random::{get_bool, get_unsigned}, http::responses::TimedResponse, misc::color::Color}, models::key::MaybeApiKey};
 
 #[get("/unsigned")]
-pub async fn random_unsigned(user: MaybeUser) -> impl Responder {
+pub async fn random_unsigned(key: MaybeApiKey) -> impl Responder {
     TimedResponse::new(
         get_unsigned(&frame_bytes!()),
-        user.into()
+        key.into()
     )
         .into()
 }
 
 #[get("/signed")]
-pub async fn random_signed(user: MaybeUser) -> impl Responder {
+pub async fn random_signed(key: MaybeApiKey) -> impl Responder {
     let bytes = frame_bytes!();
 
     let mut number = get_unsigned(&bytes) as i32;
@@ -21,17 +21,17 @@ pub async fn random_signed(user: MaybeUser) -> impl Responder {
         number = -number;
     }
 
-    TimedResponse::new(number, user.into())
+    TimedResponse::new(number, key.into())
         .into()
 }
 
 #[get("/boolean")]
-pub async fn random_bool(user: MaybeUser) -> impl Responder {
+pub async fn random_bool(key: MaybeApiKey) -> impl Responder {
     let bytes = frame_bytes!();
 
     TimedResponse::new(
         get_bool(&bytes),
-        user.into()
+        key.into()
     )
         .into()
 }
@@ -42,7 +42,7 @@ struct ColorQuery {
 }
 
 #[get("/color")]
-pub async fn random_color(query: Query<ColorQuery>, user: MaybeUser) -> impl Responder {
+pub async fn random_color(query: Query<ColorQuery>, key: MaybeApiKey) -> impl Responder {
     let bytes = frame_bytes!();
 
     let color = Color::from(get_unsigned(&bytes));
@@ -54,11 +54,11 @@ pub async fn random_color(query: Query<ColorQuery>, user: MaybeUser) -> impl Res
 
     match format.as_str() {
         "rgb" => {
-            TimedResponse::new(color, user.into())
+            TimedResponse::new(color, key.into())
                 .into()
         },
         "hex" => {
-            TimedResponse::new(color.as_hex(), user.into())
+            TimedResponse::new(color.as_hex(), key.into())
                 .into()
         },
         _ => {

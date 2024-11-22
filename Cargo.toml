@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-actix-web = "4.9.0"
+actix-web = { version = "4.9.0", features = ["rustls"] }
 time = { version = "0.3.36", features = ["serde"] }
 dotenvs = "0.1.0"
 rand = "0.8.5"
-reqwest = { version = "0.12.9", features = ["json"] }
+reqwest = { version = "0.12.9", features = ["http2", "json", "rustls-tls"], default-features = false }
 serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"
 thiserror = "2.0.0"

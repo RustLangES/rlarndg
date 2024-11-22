@@ -30,11 +30,6 @@ pub enum UserError {
     Jwt(#[from] JwtError)
 }
 
-pub enum MaybeUser {
-    Authorized(User),
-    Unauthorized
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 struct UserClaims {
     exp: usize,
@@ -160,39 +155,6 @@ impl UserClaims {
 impl From<&User> for UserClaims {
     fn from(User {id, email, password, created_at}: &User) -> Self {
         Self::new(*id, email.clone(), password.clone(), *created_at)
-    }
-}
-
-impl From<MaybeUser> for Option<User> {
-    fn from(value: MaybeUser) -> Self {
-        match value {
-            MaybeUser::Unauthorized => None,
-            MaybeUser::Authorized(user) => Some(user)
-        }
-    }
-}
-
-impl FromRequest for MaybeUser {
-    type Error = ActixWebError;
-
-    type Future = Pin<Box<dyn Future<Output = Result<MaybeUser, Self::Error>>>>;
-
-    fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
-        Box::pin(ready(Ok(
-            req.cookie("auth")
-                .and_then(|cookie|
-                    User::from_jwt(
-                        cookie
-                            .value()
-                            .to_string()
-                    )
-                        .ok()
-                )
-                    .map_or(
-                        MaybeUser::Unauthorized,
-                        MaybeUser::Authorized
-                    )
-        )))
     }
 }
 
