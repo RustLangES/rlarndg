@@ -1,23 +1,48 @@
-FROM lukemathwalker/cargo-chef:latest-rust-1.82-slim-bullseye AS chef
-WORKDIR /app
-ARG DATABASE_URL="postgres://user:password@localhost/dbname"
 
-FROM chef AS planner
-COPY . .
-RUN cargo chef prepare --recipe-path recipe.json
+FROM rust:1.82-slim-bullseye AS backend-builder
 
-FROM chef AS builder
-COPY --from=planner /app/recipe.json recipe.json
-RUN apt-get update && apt-get install -y --no-install-recommends curl && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends libssl-dev pkg-config
 
-RUN cargo chef cook --release --recipe-path recipe.json
+WORKDIR /build
 
-COPY . .
+COPY Cargo.* .
+COPY src/ src/
+COPY migrations/ migrations/
+COPY .sqlx/ .sqlx/
+
 RUN SQLX_OFFLINE=true cargo build --release
 
-# Runtime
-FROM debian:bullseye-slim AS runtime
+FROM denoland/deno:2.1.1 AS frontend-builder
+
+WORKDIR /build
+
+COPY frontend .
+
+RUN deno install
+RUN deno task build
+
+FROM nginx:1-bookworm
+
+RUN apt-get update && apt-get install -y \
+	libssl-dev \
+    libc6 \
+    libgcc-s1 \
+    libstdc++6 \
+    ca-certificates
+
 WORKDIR /app
-RUN apt-get update && apt-get clean && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/target/release/app /usr/local/bin/app
-ENTRYPOINT ["/usr/local/bin/app"]
+
+COPY --from=backend-builder /build/target/release/rlarndg /app/backend
+COPY --from=frontend-builder /build/dist/ /app/frontend/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY sources.json /app/sources.json
+
+ARG STRIPE_SECRET
+ARG DATABASE_URL
+
+RUN echo "STRIPE_SECRET=${STRIPE_SECRET}" > /app/.env && \
+	echo "DATABASE_URL=${DATABASE_URL}" >> /app/.env
+
+RUN chmod 777 ./backend
+
+CMD ["/bin/sh", "-c", "service nginx start && ./backend --source sources.json"]

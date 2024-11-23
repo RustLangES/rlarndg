@@ -6,7 +6,7 @@ use serde::Serialize;
 use serde_json::Error as JsonError;
 use sqlx::{query, query_as, Error as SqlxError};
 use time::{ext::NumericalDuration, OffsetDateTime};
-use tokio::runtime::Runtime;
+use tokio::runtime::Handle;
 use crate::{db, helpers::database::connection::DbConnectionError};
 use thiserror::Error;
 
@@ -158,8 +158,7 @@ impl FromRequest for MaybeApiKey {
     type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
-        let runtime = Runtime::new()
-            .unwrap();
+        let runtime = Handle::current();
 
         if let Some(value) = req.headers().get("Authorization") {
             let value = value
