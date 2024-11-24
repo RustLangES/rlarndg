@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends libssl-dev pkg-
 WORKDIR /build
 
 COPY Cargo.* .
-COPY src/ src/
-COPY migrations/ migrations/
-COPY .sqlx/ .sqlx/
+COPY src/ ./src/
+COPY migrations/ ./migrations/
+COPY .sqlx/ ./.sqlx/
 
 RUN SQLX_OFFLINE=true cargo build --release
 
@@ -21,7 +21,7 @@ COPY frontend .
 RUN deno install
 RUN deno task build
 
-FROM nginx:1-bookworm
+FROM nginx:1-bullseye
 
 RUN apt-get update && apt-get install -y \
 	libssl-dev \
@@ -44,5 +44,7 @@ RUN echo "STRIPE_SECRET=${STRIPE_SECRET}" > /app/.env && \
 	echo "DATABASE_URL=${DATABASE_URL}" >> /app/.env
 
 RUN chmod 777 ./backend
+
+RUN sqlx migrate run
 
 CMD ["/bin/sh", "-c", "service nginx start && ./backend --source sources.json"]

@@ -7,8 +7,6 @@ services:
             POSTGRES_USER: rustlang-es
             POSTGRES_PASSWORD: rustlang-es
             POSTGRES_DB: rlarndg
-        networks:
-            - rlarndg_network
 
     rlarndg:
         container_name: rlarndg
@@ -17,13 +15,8 @@ services:
             dockerfile: Dockerfile
             args:
                 STRIPE_SECRET: ${STRIPE_SECRET}
-                DATABASE_URL: "postgres://rustlang-es:rustlang-es@rlarndg_network/rlarndg"
+                DATABASE_URL: "postgres://rustlang-es:rustlang-es@postgres/rlarndg"
         depends_on:
             - postgres
         ports:
             - "10020:80"
-        networks:
-            - rlarndg_network
-
-networks:
-    rlarndg_network:
