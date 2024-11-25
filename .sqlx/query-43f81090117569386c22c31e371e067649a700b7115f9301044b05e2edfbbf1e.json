@@ -1,0 +1,50 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                SELECT *\n                FROM keys\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "token",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "paid",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 4,
+        "name": "stripe_session_id",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "43f81090117569386c22c31e371e067649a700b7115f9301044b05e2edfbbf1e"
+}

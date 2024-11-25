@@ -2,18 +2,19 @@ use actix_web::{body::BoxBody, http::header::ContentType, HttpResponse};
 use serde::Serialize;
 use serde_json::to_string;
 use time::OffsetDateTime;
+use crate::models::key::ApiKey;
 
 #[derive(Serialize)]
 pub struct TimedResponse<T: Serialize> {
-    author: Option<u8>, // TODO: implement api keys
+    author: Option<i32>,
     timestamp: i64,
     value: T
 }
 
 impl<T: Serialize> TimedResponse<T> {
-    pub fn new(value: T) -> Self {
+    pub fn new(value: T, key: Option<ApiKey>) -> Self {
         Self {
-            author: None,
+            author: key.map(|key| key.user_id),
             timestamp: OffsetDateTime::now_utc().unix_timestamp(),
             value
         }

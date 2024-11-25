@@ -89,7 +89,7 @@ export default function Endpoint(props: EndpointProps): ReactElement {
 
 	async function request(): Promise<void> {
 		const result = await fetch(url, {
-			headers,
+			headers: Object.fromEntries(Object.entries(headers).filter(([_, v]) => v)),
 			method: props.method,
 			redirect: "follow",
 			cache: "no-cache",

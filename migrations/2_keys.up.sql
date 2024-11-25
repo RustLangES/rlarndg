@@ -1,0 +1,9 @@
+
+CREATE TABLE keys (
+	id SERIAL PRIMARY KEY,
+	user_id INTEGER REFERENCES users(id) NOT NULL,
+	token VARCHAR(100) NOT NULL,
+	paid FLOAT NOT NULL,
+	stripe_session_id VARCHAR(255) NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

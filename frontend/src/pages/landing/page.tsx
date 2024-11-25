@@ -5,14 +5,24 @@ import TopBar from "../../components/top-bar/component";
 import RandomText from "../../components/random-text/component";
 import Button from "../../components/button/component";
 
+import { OptionalUserProps } from "../../helpers/user";
+
 import "./page.css";
 
-export default function Landing(): ReactElement {
+export default function Landing({user}: OptionalUserProps): ReactElement {
+	let name = undefined;
+
+	if (user != undefined)
+		name = user.email.split("@")[0];
+
 	return <>
-		<TopBar links={[
-			{text: "Documentation", href: "/docs"},
-			{text: "Pricing", href: "/pricing"}
-		]}/>
+		<TopBar
+			links={[
+				{text: "Documentation", href: "/docs"},
+				{text: "Pricing", href: "/pricing"}
+			]}
+			login={name == undefined ? "enabled" : ["panel", name]}
+		/>
 		<div className="landing-middle-wrapper">
 			<div className="landing-title-wrapper">
 				<div>
