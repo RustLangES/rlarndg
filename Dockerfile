@@ -36,6 +36,7 @@ COPY --from=backend-builder /build/target/release/rlarndg /app/backend
 COPY --from=frontend-builder /build/dist/ /app/frontend/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY sources.json /app/sources.json
+COPY migrations/ /app/migrations/
 
 ARG STRIPE_SECRET
 ARG DATABASE_URL
@@ -44,7 +45,5 @@ RUN echo "STRIPE_SECRET=${STRIPE_SECRET}" > /app/.env && \
 	echo "DATABASE_URL=${DATABASE_URL}" >> /app/.env
 
 RUN chmod 777 ./backend
-
-RUN sqlx migrate run
 
 CMD ["/bin/sh", "-c", "service nginx start && ./backend --source sources.json"]
