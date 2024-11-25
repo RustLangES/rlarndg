@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                SELECT *\n                FROM users\n                WHERE email = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "email",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "password",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "cb016d10181a7c20e96d9b5c469fe58c75b2f50ec3287908691a82597bab443e"
+}

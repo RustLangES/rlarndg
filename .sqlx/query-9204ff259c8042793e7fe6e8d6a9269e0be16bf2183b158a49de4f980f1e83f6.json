@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE keys\n                SET token = $3\n                WHERE user_id = $1 AND id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4",
+        "Varchar"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "9204ff259c8042793e7fe6e8d6a9269e0be16bf2183b158a49de4f980f1e83f6"
+}

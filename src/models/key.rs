@@ -1,12 +1,13 @@
-use std::{collections::HashMap, future::{ready, Future}, pin::Pin, sync::{Mutex, OnceLock}};
+use std::{collections::HashMap, future::{ready, Future}, pin::Pin, sync::Mutex};
 use actix_web::{dev::Payload, error::{ErrorBadRequest, ErrorInternalServerError, ErrorTooManyRequests, ErrorUnauthorized}, http::header::ToStrError, Error as ActixWebError, FromRequest, HttpRequest};
-use bcrypt::{hash, BcryptError, DEFAULT_COST};
+use bcrypt::{hash, verify, BcryptError, DEFAULT_COST};
+use lazy_static::lazy_static;
+use log::debug;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use serde::Serialize;
 use serde_json::Error as JsonError;
 use sqlx::{query, query_as, Error as SqlxError};
 use time::{ext::NumericalDuration, OffsetDateTime};
-use tokio::runtime::Runtime;
 use crate::{db, helpers::database::connection::DbConnectionError};
 use thiserror::Error;
 
@@ -47,7 +48,7 @@ impl ApiKey {
     fn generate() -> String {
         thread_rng()
             .sample_iter(&Alphanumeric)
-            .take(100)
+            .take(30)
             .map(char::from)
             .collect::<String>()
     }
@@ -72,19 +73,23 @@ impl ApiKey {
     }
 
     pub async fn from_key(key: String) -> Result<Option<Self>, ApiKeyError> {
-        let key = hash(key, DEFAULT_COST)?;
-
-        Ok(query_as!(
+        let keys = query_as!(
             Self,
             r#"
                 SELECT *
                 FROM keys
-                WHERE token = $1
-            "#,
-            key
+            "#
         )
-            .fetch_optional(db!())
-            .await?)
+            .fetch_all(db!())
+            .await?;
+
+        for db_key in keys {
+            if verify(&key, &db_key.token)? {
+                return Ok(Some(db_key));
+            }
+        }
+
+        Ok(None)
     }
 
     pub async fn reset_key(user_id: i32, key_id: i32) -> Result<String, ApiKeyError> {
@@ -149,8 +154,10 @@ impl Into<Option<ApiKey>> for MaybeApiKey {
     }
 }
 
-static RATE_LIMIT_DICT: OnceLock<Mutex<HashMap<String, OffsetDateTime>>>
-    = OnceLock::new();
+lazy_static! {
+    static ref RATE_LIMIT_DICT: Mutex<HashMap<String, OffsetDateTime>>
+        = Mutex::new(HashMap::new());
+}
 
 impl FromRequest for MaybeApiKey {
     type Error = ActixWebError;
@@ -158,28 +165,27 @@ impl FromRequest for MaybeApiKey {
     type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
-        let runtime = Runtime::new()
-            .unwrap();
-
         if let Some(value) = req.headers().get("Authorization") {
-            let value = value
-                .to_str()
-                .map(|value| runtime.block_on(
-                    async move { ApiKey::from_key(value.to_string()).await }
-                ))
-                .map_err(|err| ApiKeyError::ToString(err));
-
-            let value = match value {
-                Ok(Ok(Some(v))) => Ok(MaybeApiKey::Authorized(v)),
-                Ok(Ok(None)) => Err(ErrorUnauthorized("The provided key is not valid.")),
-                Ok(Err(e)) | Err(e) => Err(ErrorInternalServerError(format!("{e:#}")))
+            let key = match value.to_str() {
+                Ok(key) => key.to_string(),
+                Err(err) => {
+                    return Box::pin(ready(
+                        Err(ErrorInternalServerError(format!("{err:#}")))
+                    ));
+                }
             };
 
-            return Box::pin(ready(value));
+            return Box::pin(async {
+                match ApiKey::from_key(key).await {
+                    Ok(Some(key)) => Ok(Self::Authorized(key)),
+                    Ok(None) => Err(ErrorUnauthorized("The provided key is not valid")),
+                    Err(err) => Err(ErrorInternalServerError(format!("{err:#}")))
+                }
+            });
         };
 
         let ip = match req.peer_addr() {
-            Some(addr) => addr.to_string(),
+            Some(addr) => addr.ip().to_string(),
             None => {
                 return Box::pin(
                     ready(Err(
@@ -189,20 +195,23 @@ impl FromRequest for MaybeApiKey {
             }
         };
 
-        let mut rl_dict = RATE_LIMIT_DICT.get_or_init(|| Mutex::new(HashMap::new()))
+        let mut rl_dict = RATE_LIMIT_DICT
             .lock()
-            .unwrap(); // should never ever panic!.
+            .unwrap();
+        let now = OffsetDateTime::now_utc();
+
+        debug!("Current time: {now}");
 
         if let Some(time) = rl_dict.get(&ip) {
-            let now = OffsetDateTime::now_utc();
+            if now < *time {
+                debug!("Ratelimit for {ip} expires at {time}");
 
-            if time <= &now {
                 return Box::pin(
                     ready(Err(
                         ErrorTooManyRequests(format!(
                             "
-                            Too many requests, you will be able to make
-                            a request again in {} seconds, unless you provide an api key.
+                            \rToo many requests, you will be able to make
+                            \ra request again in {} seconds, unless you provide an api key.
                             ",
                             (*time - now).whole_seconds()
                         ))
@@ -211,8 +220,11 @@ impl FromRequest for MaybeApiKey {
             }
         }
 
-        rl_dict
-            .insert(ip, OffsetDateTime::now_utc() + 30i64.seconds());
+        let ratelimit = now + 30i64.seconds();
+
+        debug!("Updating ratelimit for IP {ip} setting expiration to {ratelimit}");
+
+        rl_dict.insert(ip, ratelimit);
 
         Box::pin(ready(Ok(Self::Unauthorized)))
     }

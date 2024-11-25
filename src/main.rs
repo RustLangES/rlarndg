@@ -21,7 +21,7 @@ enum AppError {
 
 #[main]
 async fn main() -> Result<(), AppError> {
-    Logger::try_with_str("info")?
+    Logger::try_with_str("debug")?
         .format_for_stdout(format_colored_log)
         .log_to_stdout()
         .start()?;

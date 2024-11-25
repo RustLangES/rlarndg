@@ -8,7 +8,7 @@ actix-web = { version = "4.9.0", features = ["rustls"] }
 time = { version = "0.3.36", features = ["serde"] }
 dotenvs = "0.1.0"
 rand = "0.8.5"
-reqwest = { version = "0.12.9", features = ["http2", "json", "rustls-tls"], default-features = false }
+reqwest = { version = "0.12.9", features = ["json"] }
 serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"
 thiserror = "2.0.0"
@@ -16,7 +16,8 @@ tokio = { version = "1.41.0", features = ["full"] }
 flexi_logger = "0.29.6"
 log = "0.4.22"
 colored = "2.1.0"
-sqlx = { version = "0.8.2", features = ["bigdecimal", "postgres", "runtime-async-std", "time"] }
+sqlx = { version = "0.8.2", features = ["bigdecimal", "postgres", "runtime-tokio", "time"] }
 jsonwebtoken = "9.3.0"
 bcrypt = "0.15.1"
 urlencoding = "2.1.3"
+lazy_static = "1.5.0"

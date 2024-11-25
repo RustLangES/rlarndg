@@ -1,0 +1,22 @@
+
+services:
+    postgres:
+        image: "postgres:15"
+        container_name: rlarndg_db
+        environment:
+            POSTGRES_USER: rustlang-es
+            POSTGRES_PASSWORD: rustlang-es
+            POSTGRES_DB: rlarndg
+
+    rlarndg:
+        container_name: rlarndg
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                STRIPE_SECRET: ${STRIPE_SECRET}
+                DATABASE_URL: "postgres://rustlang-es:rustlang-es@postgres/rlarndg"
+        depends_on:
+            - postgres
+        ports:
+            - "10020:80"

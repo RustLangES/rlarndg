@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { CopyBlock, hybrid } from "react-code-blocks";
 
 import TopBar from "../../components/top-bar/component";
@@ -9,8 +9,6 @@ import { OptionalUserProps } from "../../helpers/user";
 import "./page.css";
 
 export default function Documentation({user}: OptionalUserProps): ReactElement {
-	const [apiKey, setApiKey] = useState("");
-
 	let name = undefined;
 
 	if (user != undefined)
@@ -105,8 +103,7 @@ export default function Documentation({user}: OptionalUserProps): ReactElement {
 				]}
 				headers={[
 					{
-						name: "Authorization",
-						autocomplete: () => apiKey
+						name: "Authorization"
 					}
 				]}
 			/>
@@ -123,8 +120,7 @@ export default function Documentation({user}: OptionalUserProps): ReactElement {
 				responseType="json-or-text"
 				headers={[
 					{
-						name: "Authorization",
-						autocomplete: () => apiKey
+						name: "Authorization"
 					}
 				]}
 			/>
@@ -141,8 +137,7 @@ export default function Documentation({user}: OptionalUserProps): ReactElement {
 				responseType="json-or-text"
 				headers={[
 					{
-						name: "Authorization",
-						autocomplete: () => apiKey
+						name: "Authorization"
 					}
 				]}
 			/>
@@ -160,8 +155,7 @@ export default function Documentation({user}: OptionalUserProps): ReactElement {
 				responseType="json-or-text"
 				headers={[
 					{
-						name: "Authorization",
-						autocomplete: () => apiKey
+						name: "Authorization"
 					}
 				]}
 			/>

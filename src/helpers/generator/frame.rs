@@ -1,7 +1,7 @@
 use std::{collections::{HashMap, HashSet}, env::args, fs::read_to_string, io::Error as IoError, str::FromStr, sync::{LazyLock, OnceLock}};
 use actix_web::web::Bytes;
 use log::{info, warn};
-use reqwest::{header::{HeaderMap, HeaderName, HeaderValue, InvalidHeaderValue, InvalidHeaderName}, Client, Error as RequestError};
+use reqwest::{header::{HeaderMap, HeaderName, HeaderValue, InvalidHeaderName, InvalidHeaderValue}, Client, Error as RequestError};
 use serde::Deserialize;
 use serde_json::{from_str, Error as JsonError};
 use thiserror::Error;
@@ -104,7 +104,7 @@ pub async fn frame_bytes_from_source<'r>() -> Result<Bytes, CaptureError<'r>> {
         state.source_index += 1;
     }
 
-    if sources.len() >= state.source_index {
+    if sources.len() == 0 || sources.len() >= state.source_index {
         state.source_index = 0;
     }
 
