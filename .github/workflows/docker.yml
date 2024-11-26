@@ -1,17 +1,10 @@
-name: Create and publish a Docker image
+name: Create and Publish a Docker Image
 
 on:
   push:
-    tags:
-      - "**"
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      tag:
-        description: ""
-        required: true
-        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -24,33 +17,27 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: downcase REPO
-        run: |
-          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-      - name: Login to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+
+      - name: Set IMAGE_NAME
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+      - name: Login to the Container Registry
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Push image to DO Container Registry
-        env:
-          LITCRYPT_ENCRYPT_KEY: ${{ secrets.LITCRYPT_ENCRYPT_KEY }}
-          STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
-        run: docker compose build --push
-
-      - name: Push Docker image
+      - name: Build and Push Docker Image
         run: |
-          IMG_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.labels.org.opencontainers.image.version || 'latest' }}
-          docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG $IMG_NAME:$IMAGE_TAG
+          IMAGE_TAG=latest
+          IMG_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          echo "Building and pushing $IMG_NAME:$IMAGE_TAG"
+          docker build --build-arg "LITCRYPT_ENCRYPT_KEY=${{ secrets.LITCRYPT_ENCRYPT_KEY }}" \
+                       --build-arg "STRIPE_SECRET=${{ secrets.STRIPE_SECRET }}" \
+                       -t $IMG_NAME:$IMAGE_TAG .
           docker push $IMG_NAME:$IMAGE_TAG

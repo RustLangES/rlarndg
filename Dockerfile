@@ -1,4 +1,4 @@
-
+# Rust builder
 FROM rust:1.82-slim-bullseye AS backend-builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends libssl-dev pkg-config
@@ -20,6 +20,7 @@ ENV DATABASE_URL=$DATABASE_URL
 
 RUN SQLX_OFFLINE=true cargo build --release
 
+# front builder
 FROM denoland/deno:2.1.1 AS frontend-builder
 
 WORKDIR /build
@@ -29,7 +30,13 @@ COPY frontend .
 RUN deno install
 RUN deno task build
 
+#
+# Runtime
+#
 FROM nginx:1-bullseye
+
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 
 RUN apt-get update && apt-get install -y \
 	libssl-dev \
