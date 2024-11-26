@@ -48,7 +48,7 @@ jobs:
 
       - name: Push Docker image
         run: |
-          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          IMAGE_TAG=${{ steps.meta.outputs.tags || inputs.tag }}
-          docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
-          docker push $IMAGE_NAME:${{ env.IMAGE_TAG }}
+          IMG_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.tags }}
+          docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG $IMG_NAME:$IMAGE_TAG
+          docker push $IMG_NAME:${{ env.IMAGE_TAG }}
