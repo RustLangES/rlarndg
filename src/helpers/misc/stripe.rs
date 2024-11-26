@@ -1,8 +1,16 @@
+use lazy_static::lazy_static;
 use reqwest::{header::AUTHORIZATION, Client, Error as RequestError};
 use serde::Deserialize;
 use thiserror::Error;
 
-use crate::models::{key::{ApiKey, ApiKeyError}, user::User};
+use crate::models::{
+    key::{ApiKey, ApiKeyError},
+    user::User,
+};
+
+lazy_static! {
+    static ref STRIPE_SECRET: String = lc!(env!("STRIPE_SECRET"));
+}
 
 #[derive(Error, Debug)]
 pub enum StripeError {
@@ -10,31 +18,43 @@ pub enum StripeError {
     Request(#[from] RequestError),
 
     #[error("{0:#}")]
-    ApiKey(#[from] ApiKeyError)
+    ApiKey(#[from] ApiKeyError),
 }
 
 #[derive(Deserialize)]
 struct StripeSession {
-    url: String
+    url: String,
 }
 
-pub async fn create_stripe_payment(host: &String, user: &User, amount: f32) -> Result<String, StripeError> {
+pub async fn create_stripe_payment(
+    host: &String,
+    user: &User,
+    amount: f32,
+) -> Result<String, StripeError> {
     let StripeSession { url } = Client::new()
         .post("https://api.stripe.com/v1/checkout/sessions")
-        .header(AUTHORIZATION, format!("Bearer {}", lc!("STRIPE_SECRET")))
+        .header(AUTHORIZATION, format!("Bearer {}", *STRIPE_SECRET))
         .form(&[
             ("payment_method_types[]", "card"),
             ("line_items[0][price_data][currency]", "usd"),
-            ("line_items[0][price_data][product_data][name]", "RlARndG API key"),
-            ("line_items[0][price_data][unit_amount]", &(amount * 100f32).round().to_string()),
+            (
+                "line_items[0][price_data][product_data][name]",
+                "RlARndG API key",
+            ),
+            (
+                "line_items[0][price_data][unit_amount]",
+                &(amount * 100f32).round().to_string(),
+            ),
             ("line_items[0][quantity]", "1"),
             ("mode", "payment"),
-            ("success_url", &format!(
-                "{host}/api/keys/checkout/success?i={}&p={}&c={{CHECKOUT_SESSION_ID}}",
-                user.id,
-                amount
-            )),
-            ("cancel_url", &format!("{host}/pricing"))
+            (
+                "success_url",
+                &format!(
+                    "{host}/api/keys/checkout/success?i={}&p={}&c={{CHECKOUT_SESSION_ID}}",
+                    user.id, amount
+                ),
+            ),
+            ("cancel_url", &format!("{host}/pricing")),
         ])
         .send()
         .await?
@@ -46,12 +66,12 @@ pub async fn create_stripe_payment(host: &String, user: &User, amount: f32) -> R
 
 #[derive(Deserialize)]
 struct StripeSessionResponse {
-    payment_intent: String
+    payment_intent: String,
 }
 
 #[derive(Deserialize)]
 struct PaymentIntentResponse {
-    status: String
+    status: String,
 }
 
 pub async fn verify_payment(session_id: &String) -> Result<bool, StripeError> {
@@ -60,16 +80,20 @@ pub async fn verify_payment(session_id: &String) -> Result<bool, StripeError> {
     }
 
     let StripeSessionResponse { payment_intent } = Client::new()
-        .get(format!("https://api.stripe.com/v1/checkout/sessions/{session_id}"))
-        .header(AUTHORIZATION, format!("Bearer {}", lc!("STRIPE_SECRET")))
+        .get(format!(
+            "https://api.stripe.com/v1/checkout/sessions/{session_id}"
+        ))
+        .header(AUTHORIZATION, format!("Bearer {}", *STRIPE_SECRET))
         .send()
         .await?
         .json()
         .await?;
 
     let PaymentIntentResponse { status } = Client::new()
-        .get(format!("https://api.stripe.com/v1/payment_intents/{payment_intent}"))
-        .header(AUTHORIZATION, format!("Bearer {}", lc!("STRIPE_SECRET")))
+        .get(format!(
+            "https://api.stripe.com/v1/payment_intents/{payment_intent}"
+        ))
+        .header(AUTHORIZATION, format!("Bearer {}", *STRIPE_SECRET))
         .send()
         .await?
         .json()

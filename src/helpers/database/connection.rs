@@ -1,6 +1,10 @@
-use std::sync::OnceLock;
+use sqlx::{
+    migrate::{MigrateError, Migrator},
+    postgres::PgPoolOptions,
+    Error as SqlxError, Pool, Postgres,
+};
 use std::path::Path;
-use sqlx::{migrate::{MigrateError, Migrator}, postgres::PgPoolOptions, Error as SqlxError, Pool, Postgres};
+use std::sync::OnceLock;
 use thiserror::Error;
 
 static CONNECTION: OnceLock<Pool<Postgres>> = OnceLock::new();
@@ -11,7 +15,7 @@ pub enum DbConnectionError {
     Connection(#[from] SqlxError),
 
     #[error("{0:#}")]
-    Migrate(#[from] MigrateError)
+    Migrate(#[from] MigrateError),
 }
 
 pub async fn get_db_connection<'r>() -> Result<&'r Pool<Postgres>, DbConnectionError> {
@@ -21,7 +25,7 @@ pub async fn get_db_connection<'r>() -> Result<&'r Pool<Postgres>, DbConnectionE
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(&lc!("DATABASE_URL"))
+        .connect(&lc!(env!("DATABASE_URL")))
         .await?;
 
     Migrator::new(Path::new("./migrations"))
