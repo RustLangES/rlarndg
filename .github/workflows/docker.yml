@@ -41,11 +41,13 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Push image to DO Container Registry
+        env:
+          STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
         run: docker compose push
 
       - name: Push Docker image
         run: |
-          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          IMAGE_TAG=${{ steps.meta.outputs.tags || inputs.tag }}
-          docker tag ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} $IMAGE_NAME:${{ env.IMAGE_TAG }}
-          docker push $IMAGE_NAME:${{ env.IMAGE_TAG }}
+          IMG_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.tags }}
+          docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG $IMG_NAME:$IMAGE_TAG
+          docker push $IMG_NAME:${{ env.IMAGE_TAG }}
