@@ -25,9 +25,12 @@
         };
         craneLib = crane.overrideToolchain toolchain;
 
-        buildInputs = with pkgs; lib.optionals pkgs.stdenv.isDarwin [
-          pkgs.libiconv
-          pkgs.darwin.apple_sdk.frameworks.Security
+        buildInputs = with pkgs; [
+          pkg-config
+          openssl
+        ] ++ lib.optionals stdenv.isDarwin [
+          libiconv
+          darwin.apple_sdk.frameworks.Security
         ];
 
         src = pkgs.lib.cleanSourceWith {
@@ -72,6 +75,7 @@
 
           packages = with pkgs; [
             toolchain
+            pkg-config
             openssl
             sqlx-cli
           ];
