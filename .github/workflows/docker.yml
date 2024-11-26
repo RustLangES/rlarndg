@@ -41,6 +41,9 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Push image to DO Container Registry
+        env:
+          LITCRYPT_ENCRYPT_KEY: ${{ secrets.LITCRYPT_ENCRYPT_KEY }}
+          STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
         run: docker compose push
 
       - name: Push Docker image

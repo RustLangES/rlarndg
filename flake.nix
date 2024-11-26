@@ -76,6 +76,7 @@
             sqlx-cli
           ];
 
+          LITCRYPT_ENCRYPT_KEY = "test-key";
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath libraries}";
         };
       }
