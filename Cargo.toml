@@ -20,4 +20,12 @@ sqlx = { version = "0.8.2", features = ["bigdecimal", "postgres", "runtime-tokio
 jsonwebtoken = "9.3.0"
 bcrypt = "0.15.1"
 urlencoding = "2.1.3"
+<<<<<<< Updated upstream
 lazy_static = "1.5.0"
+=======
+<<<<<<< Updated upstream
+=======
+lazy_static = "1.5.0"
+litcrypt = "0.3.0"
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
