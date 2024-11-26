@@ -15,7 +15,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push-image:
@@ -28,6 +27,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: downcase REPO
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
       - name: Login to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
@@ -44,11 +46,11 @@ jobs:
         env:
           LITCRYPT_ENCRYPT_KEY: ${{ secrets.LITCRYPT_ENCRYPT_KEY }}
           STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
-        run: docker compose push
+        run: docker compose build --push
 
       - name: Push Docker image
         run: |
           IMG_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.labels.org.opencontainers.image.version }}
+          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.labels.org.opencontainers.image.version || 'latest' }}
           docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG $IMG_NAME:$IMAGE_TAG
           docker push $IMG_NAME:$IMAGE_TAG
