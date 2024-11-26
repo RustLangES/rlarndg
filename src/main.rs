@@ -6,6 +6,11 @@ use tokio::main;
 use thiserror::Error;
 use std::io::Error as IoError;
 
+#[macro_use]
+extern crate litcrypt;
+
+use_litcrypt!();
+
 mod helpers;
 mod routes;
 mod models;

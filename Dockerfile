@@ -10,6 +10,14 @@ COPY src/ ./src/
 COPY migrations/ ./migrations/
 COPY .sqlx/ ./.sqlx/
 
+ARG LITCRYPT_ENCRYPT_KEY
+ARG STRIPE_SECRET
+ARG DATABASE_URL
+
+ENV LITCRYPT_ENCRYPT_KEY=$LITCRYPT_ENCRYPT_KEY
+ENV STRIPE_SECRET=$STRIPE_SECRET
+ENV DATABASE_URL=$DATABASE_URL
+
 RUN SQLX_OFFLINE=true cargo build --release
 
 FROM denoland/deno:2.1.1 AS frontend-builder
@@ -37,12 +45,6 @@ COPY --from=frontend-builder /build/dist/ /app/frontend/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY sources.json /app/sources.json
 COPY migrations/ /app/migrations/
-
-ARG STRIPE_SECRET
-ARG DATABASE_URL
-
-RUN echo "STRIPE_SECRET=${STRIPE_SECRET}" > /app/.env && \
-	echo "DATABASE_URL=${DATABASE_URL}" >> /app/.env
 
 RUN chmod 777 ./backend
 

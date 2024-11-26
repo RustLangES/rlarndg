@@ -42,12 +42,13 @@ jobs:
 
       - name: Push image to DO Container Registry
         env:
+          LITCRYPT_ENCRYPT_KEY: ${{ secrets.LITCRYPT_ENCRYPT_KEY }}
           STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
         run: docker compose push
 
       - name: Push Docker image
         run: |
           IMG_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.tags }}
+          IMAGE_TAG=${{ inputs.tag || steps.meta.outputs.labels.org.opencontainers.image.version }}
           docker tag ${{ env.IMAGE_NAME }}:$IMAGE_TAG $IMG_NAME:$IMAGE_TAG
-          docker push $IMG_NAME:${{ env.IMAGE_TAG }}
+          docker push $IMG_NAME:$IMAGE_TAG

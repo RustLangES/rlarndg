@@ -1,4 +1,3 @@
-use dotenv::var;
 use reqwest::{header::AUTHORIZATION, Client, Error as RequestError};
 use serde::Deserialize;
 use thiserror::Error;
@@ -7,9 +6,6 @@ use crate::models::{key::{ApiKey, ApiKeyError}, user::User};
 
 #[derive(Error, Debug)]
 pub enum StripeError {
-    #[error("Missing stripe secret.")]
-    MissingSecret,
-
     #[error("{0:#}")]
     Request(#[from] RequestError),
 
@@ -25,7 +21,7 @@ struct StripeSession {
 pub async fn create_stripe_payment(host: &String, user: &User, amount: f32) -> Result<String, StripeError> {
     let StripeSession { url } = Client::new()
         .post("https://api.stripe.com/v1/checkout/sessions")
-        .header(AUTHORIZATION, format!("Bearer {}", var("STRIPE_SECRET").map_err(|_| StripeError::MissingSecret)?))
+        .header(AUTHORIZATION, format!("Bearer {}", lc!("STRIPE_SECRET")))
         .form(&[
             ("payment_method_types[]", "card"),
             ("line_items[0][price_data][currency]", "usd"),
@@ -63,11 +59,9 @@ pub async fn verify_payment(session_id: &String) -> Result<bool, StripeError> {
         return Ok(false);
     }
 
-    let stripe_secret = var("STRIPE_SECRET").map_err(|_| StripeError::MissingSecret)?;
-
     let StripeSessionResponse { payment_intent } = Client::new()
         .get(format!("https://api.stripe.com/v1/checkout/sessions/{session_id}"))
-        .header(AUTHORIZATION, format!("Bearer {stripe_secret}"))
+        .header(AUTHORIZATION, format!("Bearer {}", lc!("STRIPE_SECRET")))
         .send()
         .await?
         .json()
@@ -75,7 +69,7 @@ pub async fn verify_payment(session_id: &String) -> Result<bool, StripeError> {
 
     let PaymentIntentResponse { status } = Client::new()
         .get(format!("https://api.stripe.com/v1/payment_intents/{payment_intent}"))
-        .header(AUTHORIZATION, format!("Bearer {stripe_secret}"))
+        .header(AUTHORIZATION, format!("Bearer {}", lc!("STRIPE_SECRET")))
         .send()
         .await?
         .json()
